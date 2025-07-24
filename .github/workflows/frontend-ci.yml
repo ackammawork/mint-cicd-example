@@ -1,0 +1,45 @@
+# .github/workflows/frontend-ci.yml
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: [main]
+    paths: # <--- Trigger only on changes in the frontend directory
+      - 'frontend/**'
+
+jobs:
+  test-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm install
+      - name: Run Frontend Tests
+        working-directory: frontend
+        run: npm test
+        env:
+          NODE_ENV: test
+
+  build-and-push-frontend-image:
+    needs: [test-frontend] # Only build if frontend tests pass
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push Frontend image
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ github.sha }} -f ./.docker/frontend.Dockerfile frontend
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ github.sha }}
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest
