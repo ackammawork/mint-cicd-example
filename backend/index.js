@@ -25,7 +25,7 @@ const dbConnectPromise = MongoClient.connect(url, { useUnifiedTopology: true })
   })
   .catch(err => {
     console.error('MongoDB connection error:', err);
-    throw err; // Re-throw to propagate the error
+    throw err; 
   });
 
 // Middleware to ensure DB connection is ready before handling requests
