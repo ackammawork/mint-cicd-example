@@ -8,8 +8,8 @@ services:
     build:
       context: ../backend
       dockerfile: ../.docker/backend.Dockerfile
-    environment:
-      MONGODB_URI: mongodb://mongodb:27017
+    # environment:
+      # MONGODB_URI: mongodb://mongodb:27017
     ports: ['4000:4000']
   frontend:
     build:

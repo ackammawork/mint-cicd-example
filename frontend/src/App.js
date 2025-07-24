@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
 
+const host = "http://localhost:4000"
+
 function App() {
   const [todos, setTodos] = useState([]);
   const [text, setText] = useState('');
 
   const fetchTodos = async () => {
-    const res = await fetch('http://localhost:4000/todos');
+    const res = await fetch(host + '/todos');
     const data = await res.json();
     setTodos(data);
+    
   };
 
   const addTodo = async () => {
-    await fetch('http://localhost:4000/todos', {
+    await fetch(host + '/todos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text }),
@@ -21,14 +24,14 @@ function App() {
   };
 
   const toggleTodo = async id => {
-    await fetch(`http://localhost:4000/todos/${id}`, {
+    await fetch(`${host}/todos/${id}`, {
       method: 'PUT',
     });
     fetchTodos();
   };
 
   const deleteTodo = async id => {
-    await fetch(`http://localhost:4000/todos/${id}`, {
+    await fetch(`${host}/todos/${id}`, {
       method: 'DELETE',
     });
     fetchTodos();

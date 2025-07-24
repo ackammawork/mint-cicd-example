@@ -32,14 +32,30 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      
+      - name: Build frontend image
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend.slim:${{ github.sha }} -f ./.docker/frontend.Dockerfile frontend
+     
+      - name: Mint slim the image
+        uses: kitabisa/docker-slim-action@v1
+        env:
+          DSLIM_PRESERVE_PATH: "/app/node_modules"
+        with:
+          target: ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend.slim:${{ github.sha }}
+          tag: ${{ github.sha }}
+
+      - name: Status update
+        run: docker images
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build and push Frontend image
+
+      - name: Push to registry
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend:${{ github.sha }} -f ./.docker/frontend.Dockerfile frontend
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend:${{ github.sha }}
-          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend.slim:${{ github.sha }}
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend.slim:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend.slim:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend.slim:latest    
