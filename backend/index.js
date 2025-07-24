@@ -20,7 +20,7 @@ const dbConnectPromise = MongoClient.connect(url, { useUnifiedTopology: true })
       app.listen(4000, () => console.log('Backend listening on port 4000'));
     }
     console.log('MongoDB connected successfully!'); // For debugging
-    return { client, collection };
+    return { client, collection }; // can be used by tests to interact with db
   })
   .catch(err => {
     console.error('MongoDB connection error:', err);

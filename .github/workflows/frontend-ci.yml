@@ -1,4 +1,3 @@
-# .github/workflows/frontend-ci.yml
 name: Frontend CI/CD
 
 on:
@@ -27,12 +26,13 @@ jobs:
           NODE_ENV: test
 
   build-and-push-frontend-image:
-    needs: [test-frontend] # Only build if frontend tests pass
+    needs: [test-frontend]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       
+      # Build the fat image
       - name: Build frontend image
         run: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend.slim:${{ github.sha }} -f ./.docker/frontend.Dockerfile frontend
@@ -40,20 +40,17 @@ jobs:
       - name: Mint slim the image
         uses: kitabisa/docker-slim-action@v1
         env:
-          DSLIM_PRESERVE_PATH: "/app/node_modules"
+          DSLIM_PRESERVE_PATH: "/app/node_modules" # Mint tries to remove some critical nodemods without this
         with:
           target: ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend.slim:${{ github.sha }}
           tag: ${{ github.sha }}
-
-      - name: Status update
-        run: docker images
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
+          
       - name: Push to registry
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend.slim:${{ github.sha }}

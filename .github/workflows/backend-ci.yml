@@ -41,16 +41,7 @@ jobs:
   build-and-push-backend-image:
     needs: [test-backend] # Only build if backend tests pass
     runs-on: ubuntu-latest
-    services:
-      mongodb:
-        image: mongo:latest
-        ports:
-          - "27017:27017"
-        options: >
-          --health-cmd "mongosh --eval 'db.adminCommand({ping: 1})'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -63,7 +54,7 @@ jobs:
         uses: kitabisa/docker-slim-action@v1
         env:
           DSLIM_PRESERVE_PATH: "/app/node_modules"
-          DSLIM_HTTP_PROBE_OFF: true
+          DSLIM_HTTP_PROBE_OFF: true # No probing was needed for mint to slim correctly (other times will be needed)
         with:
           target: ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-backend.slim:${{ github.sha }}
           tag: ${{ github.sha }}

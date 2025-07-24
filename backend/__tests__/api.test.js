@@ -7,6 +7,7 @@ describe('Todos API E2E', () => {
   let mongoCollection;
 
   beforeAll(async () => {
+    // get the client and collection to interact with db
     const {client, collection} = await dbConnectPromise;
     mongoClient = client;
     mongoCollection = collection;

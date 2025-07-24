@@ -1,9 +1,7 @@
 # mint-cicd-example
+Simple todo application with CICD pipeline integrating mint toolkit for slimming images
 
 ## Run Locally
 cd .docker
-docker-compose up -d
-## Visit http://localhost
-
-## CI/CD
-Push to main branch to trigger GitHub Actions pipeline.
+docker-compose -f docker-compose-prod.yml up -d
+visit: localhost:3000
