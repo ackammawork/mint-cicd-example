@@ -1,24 +1,21 @@
 const request = require('supertest');
-const { app, dbConnectPromise, clientInstance } = require('../index');
+const { app, dbConnectPromise } = require('../index');
 
 describe('Todos API E2E', () => {
   let insertedId;
+  let mongoClient;
+  let mongoCollection;
 
   beforeAll(async () => {
-    await dbConnectPromise;
+    const {client, collection} = await dbConnectPromise;
+    mongoClient = client;
+    mongoCollection = collection;
+    await mongoCollection.deleteMany({});
   }, 15000);
 
-  afterEach(async () => {
-    if (clientInstance) {
-      const db = clientInstance.db('testingdb');
-      const testCollection = db.collection('todos');
-      await testCollection.deleteMany({});
-    }
-  }, 10000);
-
   afterAll(async () => {
-    if (clientInstance) {
-      await clientInstance.close();
+    if (mongoClient) {
+      await mongoClient.close();
     }
   }, 10000);
 

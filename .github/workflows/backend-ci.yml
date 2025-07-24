@@ -34,7 +34,7 @@ jobs:
         working-directory: backend
         run: npm test
         env:
-          MONGODB_URI: "mongodb://mongodb:27017/"
+          MONGODB_URI: "mongodb://localhost:27017/"
           NODE_ENV: test
         timeout-minutes: 5
 
@@ -51,7 +51,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push Backend image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/backend:${{ github.sha }} -f ./.docker/backend.Dockerfile backend
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/backend:${{ github.sha }}
-          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/backend:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/backend:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/backend:latest
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-backend:${{ github.sha }} -f ./.docker/backend.Dockerfile backend
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-backend:${{ github.sha }}
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-backend:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-backend:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-backend:latest

@@ -7,10 +7,9 @@ app.use(cors());
 app.use(express.json());
 
 const url = process.env.MONGODB_URI || 'mongodb://localhost:27017';
-const dbName = 'todoapp';
+const dbName = process.env.NODE_ENV === 'test' ? 'testdb' : 'todoapp';
 
 let collection;
-let clientInstance; // To store the client instance for closing later if needed
 
 // Export a promise that resolves when the DB connection is established
 const dbConnectPromise = MongoClient.connect(url, { useUnifiedTopology: true })
@@ -21,7 +20,7 @@ const dbConnectPromise = MongoClient.connect(url, { useUnifiedTopology: true })
       app.listen(4000, () => console.log('Backend listening on port 4000'));
     }
     console.log('MongoDB connected successfully!'); // For debugging
-    return collection; // Resolve the promise with the collection
+    return { client, collection };
   })
   .catch(err => {
     console.error('MongoDB connection error:', err);
@@ -77,4 +76,4 @@ app.delete('/todos/:id', async (req, res) => {
   res.json({ success: true });
 });
 
-module.exports = { app, dbConnectPromise, clientInstance }; // Export both app and the promise
+module.exports = { app, dbConnectPromise }; // Export both app and the promise

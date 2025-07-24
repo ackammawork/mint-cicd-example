@@ -4,7 +4,7 @@ name: Frontend CI/CD
 on:
   push:
     branches: [main]
-    paths: # <--- Trigger only on changes in the frontend directory
+    paths:
       - 'frontend/**'
 
 jobs:
@@ -39,7 +39,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push Frontend image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ github.sha }} -f ./.docker/frontend.Dockerfile frontend
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ github.sha }}
-          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend:${{ github.sha }} -f ./.docker/frontend.Dockerfile frontend
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend:${{ github.sha }}
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/mint-cicd-example-frontend:latest
